@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  DetailsView.swift
 //  ScanID
 //
 //  Created by Artūrs Āre on 28/09/2021.
@@ -7,15 +7,15 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct DetailsView: View {
     var body: some View {
         Text("Hello, world!")
             .padding()
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
+struct DetailsView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        DetailsView()
     }
 }
