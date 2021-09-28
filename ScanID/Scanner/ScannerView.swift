@@ -6,11 +6,11 @@
 //
 
 import SwiftUI
+import DocumentScanner
 
 struct ScannerView: View {
     var body: some View {
-        Text("Hello, world!")
-            .padding()
+        DocumentScanner.ScannerView()
     }
 }
 

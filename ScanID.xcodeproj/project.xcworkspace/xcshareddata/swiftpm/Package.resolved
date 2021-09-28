@@ -1,0 +1,25 @@
+{
+  "object": {
+    "pins": [
+      {
+        "package": "MRZParser",
+        "repositoryURL": "https://github.com/appintheair/MRZParser.git",
+        "state": {
+          "branch": null,
+          "revision": "98ef7d43a98991b0296e993f76562ebd29038595",
+          "version": "1.1.2"
+        }
+      },
+      {
+        "package": "MRZScanner",
+        "repositoryURL": "https://github.com/artursare/MRZScanner",
+        "state": {
+          "branch": "develop",
+          "revision": "0c81248d81a84bb762ba8506962f3d66ce06ce5c",
+          "version": null
+        }
+      }
+    ]
+  },
+  "version": 1
+}
