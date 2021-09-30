@@ -1,5 +1,5 @@
 //
-//  Scanner.swift
+//  CaptureViewController.swift
 //  DocumentScanner
 //
 //  Created by Artūrs Āre on 28/09/2021.
@@ -8,44 +8,12 @@
 
 
 import UIKit
-import SwiftUI
 import AVFoundation
 import MRZScanner
 
-protocol ScannerViewDelegte {
-    func dataReceived(data: Data)
-}
+class CaptureViewController: UIViewController {
 
-public struct ScannerView: UIViewControllerRepresentable, ScannerViewDelegte {
-
-    @Binding var captureData: Data
-    let embeddedVC: ViewController
-
-    public func capture() {
-        embeddedVC.capturePhoto()
-    }
-
-    public init(captureData: Binding<Data>) {
-        _captureData = captureData
-        let vc = ViewController()
-        embeddedVC = vc
-        vc.delegate = self
-    }
-
-    public func makeUIViewController(context: Context) -> UIViewController {
-        embeddedVC
-    }
-
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-
-    func dataReceived(data: Data) {
-        captureData = data
-    }
-}
-
-class ViewController: UIViewController {
-
-    var delegate: ScannerViewDelegte? = nil
+    var delegate: CaptureViewDelegte? = nil
 
     // MARK: UI objects
     private let previewView = PreviewView()
@@ -127,7 +95,6 @@ class ViewController: UIViewController {
         // Set up preview view.
         previewView.session = captureSession
         previewView.videoPreviewLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
-
         // Set up cutout view.
         cutoutView.backgroundColor = UIColor.gray.withAlphaComponent(0.1)
         maskLayer.backgroundColor = UIColor.clear.cgColor
@@ -145,27 +112,6 @@ class ViewController: UIViewController {
                 self.calculateRegionOfInterest()
             }
         }
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-
-        // Only change the current orientation if the new one is landscape or
-        // portrait. You can't really do anything about flat or unknown.
-        let deviceOrientation = UIDevice.current.orientation
-        if deviceOrientation.isPortrait || deviceOrientation.isLandscape {
-            currentOrientation = deviceOrientation
-        }
-
-        // Handle device orientation in the preview layer.
-        if let videoPreviewLayerConnection = previewView.videoPreviewLayer.connection {
-            if let newVideoOrientation = AVCaptureVideoOrientation(deviceOrientation: deviceOrientation) {
-                videoPreviewLayerConnection.videoOrientation = newVideoOrientation
-            }
-        }
-
-        // Orientation changed: figure out new region of interest (ROI).
-        calculateRegionOfInterest()
     }
 
     override func viewDidLayoutSubviews() {
@@ -212,7 +158,7 @@ class ViewController: UIViewController {
         } else {
             size = CGSize(width: desiredWidthRatio, height: desiredHeightRatio)
         }
-        // Make it centered.
+
         regionOfInterest.origin = CGPoint(x: (1 - size.width) / 2, y: (1 - size.height) / 2.6)
         regionOfInterest.size = size
 
@@ -324,7 +270,7 @@ class ViewController: UIViewController {
             captureSession.addOutput(photoOutput)
 
             photoOutput.isHighResolutionCaptureEnabled = true
-            photoOutput.isLivePhotoCaptureEnabled = photoOutput.isLivePhotoCaptureSupported
+            photoOutput.isLivePhotoCaptureEnabled = false
         } else {
             fatalError("Could not add photo output to the session")
         }
@@ -401,16 +347,6 @@ class ViewController: UIViewController {
         addAlertActionAndPresent(alertController)
     }
 
-    private func displayScanningResult(_ result: ParsedResult) {
-        let alertController = UIAlertController(
-            title: "MRZ scanned",
-            message: "",
-            preferredStyle: .alert
-        )
-
-//        addAlertActionAndPresent(alertController)
-    }
-
     private func addAlertActionAndPresent(_ alertController: UIAlertController) {
         alertController.addAction(.init(title: "OK", style: .cancel, handler: { [ unowned self ] _ in
             self.scanningIsEnabled = true
@@ -425,7 +361,7 @@ class ViewController: UIViewController {
 
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 
-extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
+extension CaptureViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     func captureOutput(
         _ output: AVCaptureOutput,
         didOutput sampleBuffer: CMSampleBuffer,
@@ -443,7 +379,7 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 completionHandler: { [weak self] result in
                     switch result {
                     case .success(let scanningResult):
-                        self?.displayScanningResult(scanningResult.result)
+                        print(scanningResult.result)
                         self?.showBoundingRects(
                             valid: scanningResult.boundingRects.valid,
                             invalid: scanningResult.boundingRects.invalid
@@ -458,16 +394,45 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
 }
 
 // MARK: - AVCapturePhotoCaptureDelegate Methods
-extension ViewController: AVCapturePhotoCaptureDelegate {
+extension CaptureViewController: AVCapturePhotoCaptureDelegate {
+
 
     func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
 
         guard let data = photo.fileDataRepresentation(),
-              let image =  UIImage(data: data)  else {
+              let image = UIImage(data: data) else {
             return
         }
 
-        delegate?.dataReceived(data: data)
+        let img = cropCameraImage(image: image, previewLayer: previewView.videoPreviewLayer)
+        delegate?.dataReceived(data: img?.pngData() ?? Data())
+    }
+
+    func cropCameraImage(image: UIImage, previewLayer: AVCaptureVideoPreviewLayer) -> UIImage? {
+        let originalSize: CGSize
+        let visibleLayerFrame = previewView.bounds
+
+        // Calculate the fractional size that is shown in the preview
+        let metaRect = previewLayer.metadataOutputRectConverted(fromLayerRect: visibleLayerFrame)
+
+        if (image.imageOrientation == .left || image.imageOrientation == .right) {
+            // For these images (which are portrait), swap the size of the
+            // image, because here the output image is actually rotated
+            // relative to what you see on screen.
+            originalSize = CGSize(width: image.size.height, height: image.size.width)
+        } else {
+            originalSize = image.size
+        }
+
+        let cropRect: CGRect = CGRect(x: metaRect.origin.x * originalSize.width, y: metaRect.origin.y * originalSize.height, width: metaRect.size.width * originalSize.width, height: metaRect.size.height * originalSize.height).integral
+
+        if let finalCgImage = image.cgImage?.cropping(to: cropRect) {
+            let finalImage = UIImage(cgImage: finalCgImage, scale: 1.0, orientation: image.imageOrientation)
+
+            return finalImage.rotate(radians: 0)
+        }
+
+        return nil
     }
 }
 
@@ -487,5 +452,29 @@ extension AVCaptureVideoOrientation {
         default:
             return nil
         }
+    }
+}
+
+extension UIImage {
+    func rotate(radians: Float) -> UIImage? {
+        var newSize = CGRect(origin: CGPoint.zero, size: self.size).applying(CGAffineTransform(rotationAngle: CGFloat(radians))).size
+        // Trim off the extremely small float value to prevent core graphics from rounding it up
+        newSize.width = floor(newSize.width)
+        newSize.height = floor(newSize.height)
+
+        UIGraphicsBeginImageContextWithOptions(newSize, false, self.scale)
+        let context = UIGraphicsGetCurrentContext()!
+
+        // Move origin to middle
+        context.translateBy(x: newSize.width/2, y: newSize.height/2)
+        // Rotate around middle
+        context.rotate(by: CGFloat(radians))
+        // Draw the image at its center
+        self.draw(in: CGRect(x: -self.size.width/2, y: -self.size.height/2, width: self.size.width, height: self.size.height))
+
+        let newImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+
+        return newImage
     }
 }

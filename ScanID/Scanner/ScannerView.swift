@@ -13,10 +13,15 @@ struct ScannerView: View {
     @State var imageData = Data()
 
     var body: some View {
-
-        let captureView = DocumentScanner.ScannerView(captureData: $imageData)
+        let captureView = CaptureView(captureData: $imageData)
         VStack {
             captureView
+
+            Spacer()
+
+            Image(uiImage: UIImage(data: imageData) ?? UIImage())
+                .resizable()
+                .aspectRatio(contentMode: .fit)
 
             Spacer()
 

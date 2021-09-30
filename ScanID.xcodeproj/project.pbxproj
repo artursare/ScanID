@@ -17,9 +17,10 @@
 		8476B16F270335DF00E88600 /* DocumentScanner.h in Headers */ = {isa = PBXBuildFile; fileRef = 8476B15F270335DF00E88600 /* DocumentScanner.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		8476B172270335DF00E88600 /* DocumentScanner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8476B15D270335DE00E88600 /* DocumentScanner.framework */; };
 		8476B173270335DF00E88600 /* DocumentScanner.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 8476B15D270335DE00E88600 /* DocumentScanner.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		8476B17F2703387C00E88600 /* Scanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476B17E2703387C00E88600 /* Scanner.swift */; };
+		8476B17F2703387C00E88600 /* CaptureViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476B17E2703387C00E88600 /* CaptureViewController.swift */; };
 		8476B181270338EA00E88600 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476B180270338EA00E88600 /* PreviewView.swift */; };
 		8476B18427033C8C00E88600 /* MRZScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 8476B18327033C8C00E88600 /* MRZScanner */; };
+		8476B18C2705AC4F00E88600 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476B18B2705AC4F00E88600 /* CaptureView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,8 +70,9 @@
 		8476B165270335DF00E88600 /* DocumentScannerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = DocumentScannerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8476B16C270335DF00E88600 /* DocumentScannerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DocumentScannerTests.swift; sourceTree = "<group>"; };
 		8476B16E270335DF00E88600 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8476B17E2703387C00E88600 /* Scanner.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Scanner.swift; sourceTree = "<group>"; };
+		8476B17E2703387C00E88600 /* CaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureViewController.swift; sourceTree = "<group>"; };
 		8476B180270338EA00E88600 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
+		8476B18B2705AC4F00E88600 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,7 +174,8 @@
 			isa = PBXGroup;
 			children = (
 				8476B15F270335DF00E88600 /* DocumentScanner.h */,
-				8476B17E2703387C00E88600 /* Scanner.swift */,
+				8476B18B2705AC4F00E88600 /* CaptureView.swift */,
+				8476B17E2703387C00E88600 /* CaptureViewController.swift */,
 				8476B180270338EA00E88600 /* PreviewView.swift */,
 				8476B160270335DF00E88600 /* Info.plist */,
 			);
@@ -346,8 +349,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8476B17F2703387C00E88600 /* Scanner.swift in Sources */,
+				8476B17F2703387C00E88600 /* CaptureViewController.swift in Sources */,
 				8476B181270338EA00E88600 /* PreviewView.swift in Sources */,
+				8476B18C2705AC4F00E88600 /* CaptureView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
