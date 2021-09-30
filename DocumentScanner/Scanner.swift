@@ -12,19 +12,41 @@ import SwiftUI
 import AVFoundation
 import MRZScanner
 
-public struct ScannerView: UIViewControllerRepresentable {
+protocol ScannerViewDelegte {
+    func dataReceived(data: Data)
+}
 
-    public init() {}
+public struct ScannerView: UIViewControllerRepresentable, ScannerViewDelegte {
 
-    public func makeUIViewController(context: UIViewControllerRepresentableContext<ScannerView>) -> UIViewController {
-        ViewController()
+    @Binding var captureData: Data
+    let embeddedVC: ViewController
+
+    public func capture() {
+        embeddedVC.capturePhoto()
     }
 
-    public func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<ScannerView>) {
+    public init(captureData: Binding<Data>) {
+        _captureData = captureData
+        let vc = ViewController()
+        embeddedVC = vc
+        vc.delegate = self
+    }
+
+    public func makeUIViewController(context: Context) -> UIViewController {
+        embeddedVC
+    }
+
+    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+
+    func dataReceived(data: Data) {
+        captureData = data
     }
 }
 
 class ViewController: UIViewController {
+
+    var delegate: ScannerViewDelegte? = nil
+
     // MARK: UI objects
     private let previewView = PreviewView()
     private let cutoutView = UIView()
@@ -57,6 +79,8 @@ class ViewController: UIViewController {
 
     private let videoDataOutput = AVCaptureVideoDataOutput()
     private let videoDataOutputQueue = DispatchQueue(label: "com.aita.mrzExample.videoDataOutputQueue")
+
+    private let photoOutput = AVCapturePhotoOutput()
 
     /// Device orientation. Updated whenever the orientation changes to a different supported orientation.
     private var currentOrientation = UIDeviceOrientation.portrait
@@ -295,6 +319,16 @@ class ViewController: UIViewController {
             fatalError("Could not add VDO output")
         }
 
+        // Add photo output.
+        if captureSession.canAddOutput(photoOutput) {
+            captureSession.addOutput(photoOutput)
+
+            photoOutput.isHighResolutionCaptureEnabled = true
+            photoOutput.isLivePhotoCaptureEnabled = photoOutput.isLivePhotoCaptureSupported
+        } else {
+            fatalError("Could not add photo output to the session")
+        }
+
         // Set zoom and autofocus to help focus on very small text.
         do {
             try captureDevice.lockForConfiguration()
@@ -306,6 +340,17 @@ class ViewController: UIViewController {
         }
 
         captureSession.startRunning()
+    }
+
+    func capturePhoto() {
+        let photoSettings = AVCapturePhotoSettings()
+        photoSettings.isHighResolutionPhotoEnabled = true
+
+        if let firstAvailablePreviewPhotoPixelFormatTypes = photoSettings.availablePreviewPhotoPixelFormatTypes.first {
+            photoSettings.previewPhotoFormat = [kCVPixelBufferPixelFormatTypeKey as String: firstAvailablePreviewPhotoPixelFormatTypes]
+        }
+
+        photoOutput.capturePhoto(with: photoSettings, delegate: self)
     }
 
     // MARK: Bounding box drawing
@@ -409,6 +454,20 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 }
             )
         }
+    }
+}
+
+// MARK: - AVCapturePhotoCaptureDelegate Methods
+extension ViewController: AVCapturePhotoCaptureDelegate {
+
+    func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
+
+        guard let data = photo.fileDataRepresentation(),
+              let image =  UIImage(data: data)  else {
+            return
+        }
+
+        delegate?.dataReceived(data: data)
     }
 }
 

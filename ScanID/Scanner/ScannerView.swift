@@ -9,8 +9,19 @@ import SwiftUI
 import DocumentScanner
 
 struct ScannerView: View {
+
+    @State var imageData = Data()
+
     var body: some View {
-        DocumentScanner.ScannerView()
+
+        let captureView = DocumentScanner.ScannerView(captureData: $imageData)
+        VStack {
+            captureView
+
+            Spacer()
+
+            Button("Take Photo", action: captureView.capture)
+        }
     }
 }
 
