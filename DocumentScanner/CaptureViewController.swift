@@ -21,6 +21,7 @@ class CaptureViewController: UIViewController {
     private let maskLayer = CAShapeLayer()
 
     // MARK: Scanning related
+    private weak var clearTimer: Timer?
     private let scanner = LiveMRZScanner()
     private var scanningIsEnabled = true {
         didSet {
@@ -297,6 +298,7 @@ class CaptureViewController: UIViewController {
         }
 
         photoOutput.capturePhoto(with: photoSettings, delegate: self)
+
     }
 
     // MARK: Bounding box drawing
@@ -362,6 +364,14 @@ class CaptureViewController: UIViewController {
 // MARK: - AVCaptureVideoDataOutputSampleBufferDelegate
 
 extension CaptureViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
+
+    func startClearTimer() {
+        clearTimer = Timer.scheduledTimer(withTimeInterval: 0.3, repeats: false) { timer in
+            self.delegate?.documentVisible(false)
+            self.showBoundingRects(valid: [], invalid: [])
+        }
+    }
+
     func captureOutput(
         _ output: AVCaptureOutput,
         didOutput sampleBuffer: CMSampleBuffer,
@@ -373,13 +383,14 @@ extension CaptureViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
                 orientation: textOrientation,
                 regionOfInterest: regionOfInterest,
                 minimumTextHeight: 0.1,
-                foundBoundingRectsHandler: { [weak self] in
-                    self?.showBoundingRects(valid: [], invalid: $0)
-                },
+                foundBoundingRectsHandler: nil,
                 completionHandler: { [weak self] result in
                     switch result {
                     case .success(let scanningResult):
                         print(scanningResult.result)
+                        self?.delegate?.documentVisible(true)
+                        self?.clearTimer?.invalidate()
+                        self?.startClearTimer()
                         self?.showBoundingRects(
                             valid: scanningResult.boundingRects.valid,
                             invalid: scanningResult.boundingRects.invalid

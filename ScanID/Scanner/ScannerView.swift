@@ -11,9 +11,10 @@ import DocumentScanner
 struct ScannerView: View {
 
     @State var imageData = Data()
+    @State var photoEnabled = false
 
     var body: some View {
-        let captureView = CaptureView(captureData: $imageData)
+        let captureView = CaptureView(captureData: $imageData, documentVisible: $photoEnabled)
         VStack {
             captureView
 
@@ -25,7 +26,9 @@ struct ScannerView: View {
 
             Spacer()
 
-            Button("Take Photo", action: captureView.capture)
+            let text = photoEnabled ? "Take Photo" : "Try finding better angle"
+            Button(text, action: captureView.capture)
+                .disabled(!photoEnabled)
         }
     }
 }

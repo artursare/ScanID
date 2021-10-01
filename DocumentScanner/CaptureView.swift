@@ -9,17 +9,20 @@ import SwiftUI
 
 protocol CaptureViewDelegte {
     func dataReceived(data: Data)
+    func documentVisible(_ isVisible: Bool)
 }
 
 /// SwiftUI wrapper for UIViewController working with AVCaptureSession
 public struct CaptureView: UIViewControllerRepresentable, CaptureViewDelegte {
 
     @Binding var captureData: Data
+    @Binding var documentVisible: Bool
 
     private let embeddedVC: CaptureViewController
 
-    public init(captureData: Binding<Data>) {
+    public init(captureData: Binding<Data>, documentVisible: Binding<Bool>) {
         _captureData = captureData
+        _documentVisible = documentVisible
 
         let vc = CaptureViewController()
         embeddedVC = vc
@@ -38,5 +41,9 @@ public struct CaptureView: UIViewControllerRepresentable, CaptureViewDelegte {
 
     func dataReceived(data: Data) {
         captureData = data
+    }
+
+    func documentVisible(_ isVisible: Bool) {
+        documentVisible = isVisible
     }
 }
