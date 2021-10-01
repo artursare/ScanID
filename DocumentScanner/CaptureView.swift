@@ -18,15 +18,13 @@ public struct CaptureView: UIViewControllerRepresentable, CaptureViewDelegte {
     @Binding var captureData: Data
     @Binding var documentVisible: Bool
 
-    private let embeddedVC: CaptureViewController
+    private let embeddedVC = CaptureViewController.shared
 
     public init(captureData: Binding<Data>, documentVisible: Binding<Bool>) {
         _captureData = captureData
         _documentVisible = documentVisible
 
-        let vc = CaptureViewController()
-        embeddedVC = vc
-        vc.delegate = self
+        embeddedVC.delegate = self
     }
 
     public func makeUIViewController(context: Context) -> UIViewController {

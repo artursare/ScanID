@@ -13,6 +13,11 @@ import MRZScanner
 
 class CaptureViewController: UIViewController {
 
+    /// 💥😑 due to how swiftui handles views, I always ended up with not running AVCaptureSession
+    /// After full day lost found the solution here https://stackoverflow.com/a/65414698
+    /// it makes sense and keeps the session alive
+    static let shared = CaptureViewController()
+
     var delegate: CaptureViewDelegte? = nil
 
     // MARK: UI objects
