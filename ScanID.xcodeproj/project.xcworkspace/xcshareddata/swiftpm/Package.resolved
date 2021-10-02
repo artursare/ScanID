@@ -18,6 +18,15 @@
           "revision": "0c81248d81a84bb762ba8506962f3d66ce06ce5c",
           "version": null
         }
+      },
+      {
+        "package": "Networking",
+        "repositoryURL": "https://github.com/freshOS/Networking",
+        "state": {
+          "branch": null,
+          "revision": "738c718aa9db9e5178cda9ad65859763f107ac63",
+          "version": "0.3.3"
+        }
       }
     ]
   },

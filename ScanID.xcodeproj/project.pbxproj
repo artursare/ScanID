@@ -21,6 +21,8 @@
 		8476B181270338EA00E88600 /* PreviewView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476B180270338EA00E88600 /* PreviewView.swift */; };
 		8476B18427033C8C00E88600 /* MRZScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 8476B18327033C8C00E88600 /* MRZScanner */; };
 		8476B18C2705AC4F00E88600 /* CaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476B18B2705AC4F00E88600 /* CaptureView.swift */; };
+		8488B2B62708520900123856 /* IdentificationDocumentAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8488B2B52708520900123856 /* IdentificationDocumentAPI.swift */; };
+		8488B2B92708602F00123856 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = 8488B2B82708602F00123856 /* Networking */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -73,6 +75,7 @@
 		8476B17E2703387C00E88600 /* CaptureViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureViewController.swift; sourceTree = "<group>"; };
 		8476B180270338EA00E88600 /* PreviewView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewView.swift; sourceTree = "<group>"; };
 		8476B18B2705AC4F00E88600 /* CaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureView.swift; sourceTree = "<group>"; };
+		8488B2B52708520900123856 /* IdentificationDocumentAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentificationDocumentAPI.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,6 +83,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8488B2B92708602F00123856 /* Networking in Frameworks */,
 				8476B172270335DF00E88600 /* DocumentScanner.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -127,6 +131,7 @@
 			isa = PBXGroup;
 			children = (
 				8476B1422703338200E88600 /* ScanIDApp.swift */,
+				8488B2B227084FD300123856 /* API */,
 				8476B153270334AE00E88600 /* Scanner */,
 				8476B154270334DB00E88600 /* Details */,
 				8476B1572703353F00E88600 /* Extensions */,
@@ -191,6 +196,14 @@
 			path = DocumentScannerTests;
 			sourceTree = "<group>";
 		};
+		8488B2B227084FD300123856 /* API */ = {
+			isa = PBXGroup;
+			children = (
+				8488B2B52708520900123856 /* IdentificationDocumentAPI.swift */,
+			);
+			path = API;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -220,6 +233,9 @@
 				8476B171270335DF00E88600 /* PBXTargetDependency */,
 			);
 			name = ScanID;
+			packageProductDependencies = (
+				8488B2B82708602F00123856 /* Networking */,
+			);
 			productName = ScanID;
 			productReference = 8476B13F2703338200E88600 /* ScanID.app */;
 			productType = "com.apple.product-type.application";
@@ -296,6 +312,7 @@
 			mainGroup = 8476B1362703338200E88600;
 			packageReferences = (
 				8476B18227033C8C00E88600 /* XCRemoteSwiftPackageReference "MRZScanner" */,
+				8488B2B72708602F00123856 /* XCRemoteSwiftPackageReference "Networking" */,
 			);
 			productRefGroup = 8476B1402703338200E88600 /* Products */;
 			projectDirPath = "";
@@ -339,6 +356,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8488B2B62708520900123856 /* IdentificationDocumentAPI.swift in Sources */,
 				8476B1522703345D00E88600 /* ScannerViewModel.swift in Sources */,
 				8476B1452703338200E88600 /* ScannerView.swift in Sources */,
 				8476B1432703338200E88600 /* ScanIDApp.swift in Sources */,
@@ -688,6 +706,14 @@
 				kind = branch;
 			};
 		};
+		8488B2B72708602F00123856 /* XCRemoteSwiftPackageReference "Networking" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/freshOS/Networking";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.3.3;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -695,6 +721,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 8476B18227033C8C00E88600 /* XCRemoteSwiftPackageReference "MRZScanner" */;
 			productName = MRZScanner;
+		};
+		8488B2B82708602F00123856 /* Networking */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 8488B2B72708602F00123856 /* XCRemoteSwiftPackageReference "Networking" */;
+			productName = Networking;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

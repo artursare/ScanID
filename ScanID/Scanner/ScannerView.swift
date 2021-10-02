@@ -10,31 +10,34 @@ import DocumentScanner
 
 struct ScannerView: View {
 
-    @State var imageData = Data()
-    @State var photoEnabled = false
+    @ObservedObject var vm: ScannerViewModel
 
     var body: some View {
-        let captureView = CaptureView(captureData: $imageData, documentVisible: $photoEnabled)
+        let captureView = CaptureView(captureData: $vm.imageData,
+                                      documentVisible: $vm.photoEnabled)
         VStack {
             captureView
 
-            Spacer()
+            Button(vm.captureButtonText, action: captureView.capture)
+                .disabled(!vm.photoEnabled)
 
-            Image(uiImage: UIImage(data: imageData) ?? UIImage())
+//            Spacer()
+
+            Image(uiImage: vm.image)
                 .resizable()
                 .aspectRatio(contentMode: .fit)
 
-            Spacer()
+//            Spacer()
 
-            let text = photoEnabled ? "Take Photo" : "Try finding better angle"
-            Button(text, action: captureView.capture)
-                .disabled(!photoEnabled)
+            Button("Use this photo", action: vm.sendPhoto)
+                .opacity(vm.canSend ? 1 : 0)
+
         }
     }
 }
 
 struct ScannerView_Previews: PreviewProvider {
     static var previews: some View {
-        ScannerView()
+        ScannerView(vm: ScannerViewModel())
     }
 }

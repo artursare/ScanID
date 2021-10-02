@@ -11,7 +11,7 @@ import SwiftUI
 struct ScanIDApp: App {
     var body: some Scene {
         WindowGroup {
-            ScannerView()
+            ScannerView(vm: ScannerViewModel())
         }
     }
 }
