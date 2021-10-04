@@ -10,11 +10,16 @@ import Combine
 
 final class ScannerViewModel: ObservableObject {
 
+    /// Modify to scan something else besides LT ID back side
+    let type = IDType(type: .id, country: "lt", side: .rev)
+
     @Published var imageData = Data()
     @Published var photoEnabled = false
     @Published var captureButtonText = ""
     @Published var image = UIImage()
     @Published var canSend = false
+
+    let document = PassthroughSubject<Document, Error>()
 
     private let api = IdentificationDocumentAPI()
 
@@ -33,7 +38,6 @@ final class ScannerViewModel: ObservableObject {
     }
 
     func sendPhoto() {
-        let type = IDType(type: .id, country: "lv", side: .rev)
         api.validate(photoData: imageData, type: type)
             .sink(receiveCompletion: { completion in
                 switch completion {
@@ -41,10 +45,11 @@ final class ScannerViewModel: ObservableObject {
                     break
                 case .failure(let error):
                     print(error)
+                    self.document.send(completion: .failure(error))
                 }
             }) { validation in
-                let json = try? JSONSerialization.jsonObject(with: validation, options: [])
-                print(json)
+                print(validation.data)
+                self.document.send(validation.data)
             }.store(in: &bag)
     }
 }
