@@ -421,7 +421,7 @@ extension CaptureViewController: AVCapturePhotoCaptureDelegate {
         }
 
         let img = cropCameraImage(image: image, previewLayer: previewView.videoPreviewLayer)
-        delegate?.dataReceived(data: img?.pngData() ?? Data())
+        delegate?.dataReceived(data: img?.jpegData(compressionQuality: 1) ?? Data())
     }
 
     func cropCameraImage(image: UIImage, previewLayer: AVCaptureVideoPreviewLayer) -> UIImage? {

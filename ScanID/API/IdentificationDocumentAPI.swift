@@ -8,7 +8,7 @@
 import Foundation
 import Combine
 import Networking
-
+import CryptoKit
 
 /*
  {
@@ -67,12 +67,14 @@ struct IdentificationDocumentAPI: NetworkingService {
     let network: NetworkingClient = {
         var client = NetworkingClient(baseURL: "https://api.identiway.com/docs")
         client.headers["x-api-key"] = apiKey
+        client.parameterEncoding = .json
         return client
     }()
 
-    func validate(photoData: Data, type: IDType) -> AnyPublisher<Validatation, Error> {
+    func validate(photoData: Data, type: IDType) -> AnyPublisher<Data, Error> {
         let document = photoData.base64EncodedString()
-        let digest = ""
+        let digest = Insecure.SHA1.hash(data: photoData).map { String(format: "%02x", $0) }.joined()
+
         return post("/validate", params: ["document" : document, "digest" : digest, "type" : type.code])
     }
 }

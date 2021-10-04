@@ -43,7 +43,8 @@ final class ScannerViewModel: ObservableObject {
                     print(error)
                 }
             }) { validation in
-                print(validation)
+                let json = try? JSONSerialization.jsonObject(with: validation, options: [])
+                print(json)
             }.store(in: &bag)
     }
 }
