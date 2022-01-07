@@ -10,7 +10,7 @@ import Combine
 import Networking
 
 struct IdentificationDocumentAPI: NetworkingService {
-    private static let apiKey = "tgxCPECR6A1sn09PoCSxXaAMQoLnVRT889ejeLCW"
+    private static let apiKey = ""
 
     let network: NetworkingClient = {
         var client = NetworkingClient(baseURL: "https://api.identiway.com/docs")
